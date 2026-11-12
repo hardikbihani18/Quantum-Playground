@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Saved result | Quantum Playground</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="paper saved-page">
+    <header class="topbar"><a class="wordmark" href="{{ url_for('home') }}">QP<span> / </span>LAB</a><div class="top-note">SAVED NOTE</div></header>
+    <main>
+      <p class="overline">JSON FILE STORAGE</p>
+      <h1 class="saved-title">Saved result.</h1>
+      {% if error %}<div class="notice">{{ error }}</div>{% else %}
+        <p><strong>Experiment:</strong> {{ saved.module }}</p>
+        <p><strong>Saved at:</strong> {{ saved.saved_at }}</p>
+        <h2>Input values</h2>
+        <pre>{{ saved.values | tojson(indent=4) }}</pre>
+        <h2>Calculated result</h2>
+        <pre>{{ saved.result | tojson(indent=4) }}</pre>
+      {% endif %}
+      <a class="back-link" href="{{ url_for('home') }}">← Return to Quantum Playground</a>
+    </main>
+  </div>
+</body>
+</html>

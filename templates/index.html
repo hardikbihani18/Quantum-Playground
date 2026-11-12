@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quantum Playground | {{ modules[active] }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="paper">
+  
+    <main>
+      <section class="cover">
+        <div class="cover-mark">Q</div>
+        <div class="cover-copy">
+          <h1>Quantum<br><span>Playground.</span></h1>
+          <p class="intro">Explore quantum experiments, change the values, and see how the results respond. Every calculation runs in Python.</p>
+        </div>
+        
+      </section>
+
+      <section class="notebook-nav">
+        <div class="section-label"><span>CONTENTS</span><span>SELECT AN EXPERIMENT</span></div>
+        <nav class="module-list">
+          {% for slug, title in modules.items() %}
+            <a class="module-link {% if active == slug %}selected{% endif %}" href="{{ url_for('module_page', module=slug) }}">
+              <span class="module-number">0{{ loop.index }}</span>
+              <span class="module-name">{{ title }}</span>
+              <span class="module-arrow">↗</span>
+            </a>
+          {% endfor %}
+        </nav>
+      </section>
+
+      <section class="experiment">
+        <div class="experiment-heading">
+          <div>
+            <p class="overline">{% if active in ['box', 'photoelectric', 'tunneling'] %}CORE EXPERIMENT{% else %}PROJECT EXTENSION{% endif %} · NOTE {{ '%02d'|format(module_number) }}</p>
+            <h2>{{ modules[active] }}</h2>
+          </div>
+          <div class="check-mark">✓</div>
+        </div>
+
+        {% if error %}
+          <div class="notice error">{{ error }}</div>
+        {% endif %}
+        {% if message %}
+          <div class="notice">{{ message }}</div>
+        {% endif %}
+
+        <div class="work-grid">
+          <section class="input-sheet">
+            <div class="sheet-heading"><span>INPUTS</span><span>WRITE VALUES</span></div>
+            <form method="post" action="{{ url_for('module_page', module=active) }}">
+              {% if active == 'box' %}
+                <label>Box length, L <small>nanometres</small><input type="number" name="length_nm" step="0.1" min="0.1" value="{{ values.length_nm }}" required></label>
+                <label>Particle mass <small>mass ratio m / mₑ</small><input type="number" name="mass_ratio" step="0.1" min="0.1" value="{{ values.mass_ratio }}" required></label>
+                <label>Quantum number, n<input type="number" name="n" min="1" max="20" step="1" value="{{ values.n }}" required></label>
+                <div class="formula-note"><span>ENERGY LEVEL</span><strong>Eₙ = n²h² / 8mL²</strong></div>
+
+              {% elif active == 'photoelectric' %}
+                <label>Metal<select name="metal">{% for metal in metals %}<option value="{{ metal }}" {% if values.metal == metal %}selected{% endif %}>{{ metal }}</option>{% endfor %}</select></label>
+                <label>Incident wavelength <small>nanometres</small><input type="number" name="wavelength_nm" step="1" min="1" value="{{ values.wavelength_nm }}" required></label>
+                <div class="formula-note"><span>EINSTEIN'S EQUATION</span><strong>KEₘₐₓ = hν − φ</strong></div>
+
+              {% elif active == 'tunneling' %}
+                <label>Particle energy, E <small>eV</small><input type="number" name="energy_eV" step="0.1" min="0.1" value="{{ values.energy_eV }}" required></label>
+                <label>Barrier height, V₀ <small>eV; must be greater than E</small><input type="number" name="barrier_eV" step="0.1" min="0.2" value="{{ values.barrier_eV }}" required></label>
+                <label>Barrier width, a <small>nanometres</small><input type="number" name="width_nm" step="0.1" min="0" value="{{ values.width_nm }}" required></label>
+                <label>Particle mass <small>mass ratio m / mₑ</small><input type="number" name="mass_ratio" step="0.1" min="0.1" value="{{ values.mass_ratio }}" required></label>
+                <div class="formula-note"><span>TRANSMISSION PROBABILITY</span><strong>T = [1 + A sinh²(κa)]⁻¹</strong></div>
+
+              {% elif active == 'superposition' %}
+                <label>Box length, L <small>nanometres</small><input type="number" name="length_nm" step="0.1" min="0.1" value="{{ values.length_nm }}" required></label>
+                <label>Particle mass <small>mass ratio m / mₑ</small><input type="number" name="mass_ratio" step="0.1" min="0.1" value="{{ values.mass_ratio }}" required></label>
+                <div class="two-fields">
+                  <label>Coefficient c₁<input type="number" name="c1" step="0.1" value="{{ values.c1 }}" required></label>
+                  <label>Coefficient c₂<input type="number" name="c2" step="0.1" value="{{ values.c2 }}" required></label>
+                  <label>Coefficient c₃<input type="number" name="c3" step="0.1" value="{{ values.c3 }}" required></label>
+                  <label>Time, t <small>femtoseconds</small><input type="number" name="time_fs" step="0.1" min="0" value="{{ values.time_fs }}" required></label>
+                </div>
+                <div class="formula-note"><span>TIME EVOLUTION</span><strong>Ψ(x,t) = Σ cₙψₙ(x)e⁻ⁱᴱⁿᵗ/ħ</strong></div>
+
+              {% elif active == 'solver' %}
+                <label>Potential<select name="kind">{% for key, title in potentials.items() %}<option value="{{ key }}" {% if values.kind == key %}selected{% endif %}>{{ title }}</option>{% endfor %}</select></label>
+                <div class="two-fields">
+                  <label>Mass ratio<input type="number" name="mass_ratio" min="0.1" step="0.1" value="{{ values.mass_ratio }}" required></label>
+                  <label>Domain half-width <small>nm</small><input type="number" name="x_max_nm" min="0.3" step="0.1" value="{{ values.x_max_nm }}" required></label>
+                  <label>Grid points<input type="number" name="grid_points" min="61" max="301" step="2" value="{{ values.grid_points }}" required></label>
+                  <label>Energy levels<input type="number" name="levels" min="1" max="8" value="{{ values.levels }}" required></label>
+                  <label>Well width <small>nm</small><input type="number" name="width" min="0.1" step="0.1" value="{{ values.width }}" required></label>
+                  <label>Barrier height <small>eV</small><input type="number" name="barrier" min="0" step="0.1" value="{{ values.barrier }}" required></label>
+                  <label>Curvature<input type="number" name="curvature" min="0" step="0.1" value="{{ values.curvature }}" required></label>
+                  <label>Well separation<input type="number" name="separation" min="0.1" step="0.1" value="{{ values.separation }}" required></label>
+                  <label>Custom amplitude<input type="number" name="amplitude" step="0.05" value="{{ values.amplitude }}" required></label>
+                </div>
+                <div class="formula-note"><span>STATIONARY SCHRÖDINGER EQUATION</span><strong>Ĥψ = Eψ</strong></div>
+
+              {% elif active == 'hydrogen' %}
+                <label>Spectral series<select name="series">{% for name in series %}<option value="{{ name }}" {% if values.series == name %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></label>
+                <label>Highest upper level, n<input type="number" name="n_max" min="3" max="20" step="1" value="{{ values.n_max }}" required></label>
+                <div class="formula-note"><span>HYDROGEN ENERGY</span><strong>Eₙ = −13.6 / n² eV</strong></div>
+              {% endif %}
+
+              <div class="form-actions">
+                <button type="submit" name="action" value="calculate">Calculate <span>→</span></button>
+              </div>
+            </form>
+            <p class="pencil-note">✓ Change an input and press Calculate to update the result.</p>
+          </section>
+
+          <section class="result-sheet">
+            <div class="sheet-heading"><span>RESULTS</span><span>PYTHON OUTPUT</span></div>
+            {% if result %}
+              {% if active == 'box' %}
+                <div class="metric"><span>Energy of state n = {{ result.n }}</span><strong>{{ '%.6f'|format(result.energy_eV) }} eV</strong></div>
+                <div class="metric"><span>Probability normalisation</span><strong>{{ '%.4f'|format(result.normalization) }}</strong></div>
+              {% elif active == 'photoelectric' %}
+                <div class="metric"><span>Photoelectron emission</span><strong>{{ 'YES' if result.emission else 'NO' }}</strong></div>
+                <div class="metric"><span>Maximum kinetic energy</span><strong>{{ '%.4f'|format(result.kinetic_energy_eV) }} eV</strong></div>
+                <div class="metric"><span>Stopping potential</span><strong>{{ '%.4f'|format(result.stopping_potential_V) }} V</strong></div>
+                <div class="metric"><span>Threshold wavelength</span><strong>{{ '%.2f'|format(result.threshold_wavelength_nm) }} nm</strong></div>
+              {% elif active == 'tunneling' %}
+                <div class="metric"><span>Transmission probability</span><strong>{{ '%.6f'|format(result.transmission) }}</strong></div>
+                <div class="metric"><span>Reflection probability</span><strong>{{ '%.6f'|format(1 - result.transmission) }}</strong></div>
+              {% elif active == 'superposition' %}
+                <div class="metric"><span>Selected time</span><strong>{{ '%.2f'|format(result.time_fs) }} fs</strong></div>
+                <div class="metric"><span>Probability normalisation</span><strong>{{ '%.4f'|format(result.normalization) }}</strong></div>
+                <div class="metric"><span>Normalised coefficients</span><strong class="small-metric">{{ result.coefficients|map('round', 3)|join(' · ') }}</strong></div>
+              {% elif active == 'solver' %}
+                <div class="metric"><span>Potential shape</span><strong>{{ potentials[result.kind] }}</strong></div>
+                <div class="metric"><span>Lowest energy</span><strong>{{ '%.6f'|format(result.energies_eV[0]) }} eV</strong></div>
+                <div class="metric"><span>Grid points</span><strong>{{ result.grid_points }}</strong></div>
+              {% elif active == 'hydrogen' %}
+                <div class="metric"><span>Series</span><strong>{{ result.series }}</strong></div>
+                <div class="metric"><span>Transitions calculated</span><strong>{{ result.lines|length }}</strong></div>
+                <div class="metric"><span>Longest wavelength</span><strong>{{ '%.2f'|format(result.lines[0].wavelength_nm) }} nm</strong></div>
+              {% endif %}
+
+              <div class="chart-heading"><span>GRAPH</span><span>GENERATED WITH MATPLOTLIB</span></div>
+              <img class="result-chart" src="{{ url_for('static', filename=chart) }}" alt="{{ modules[active] }} graph">
+
+              {% if active == 'box' %}
+                <h3 class="table-title">Energy level table</h3>
+                <table><thead><tr><th>State n</th><th>Energy (eV)</th></tr></thead><tbody>
+                  {% for row in result.levels %}<tr><td>{{ row.n }}</td><td>{{ row.energy_eV }}</td></tr>{% endfor %}
+                </tbody></table>
+              {% elif active == 'solver' %}
+                <h3 class="table-title">Calculated energy levels</h3>
+                <table><thead><tr><th>State</th><th>Numerical energy (eV)</th><th>Normalisation</th>{% if result.analytic_energies_eV %}<th>Analytic energy (eV)</th>{% endif %}</tr></thead><tbody>
+                  {% for energy in result.energies_eV %}<tr><td>{{ loop.index }}</td><td>{{ '%.6f'|format(energy) }}</td><td>{{ '%.4f'|format(result.normalizations[loop.index0]) }}</td>{% if result.analytic_energies_eV %}<td>{{ '%.6f'|format(result.analytic_energies_eV[loop.index0]) }}</td>{% endif %}</tr>{% endfor %}
+                </tbody></table>
+              {% elif active == 'hydrogen' %}
+                <h3 class="table-title">Emission lines</h3>
+                <table><thead><tr><th>Transition</th><th>Wavelength (nm)</th><th>Energy (eV)</th></tr></thead><tbody>
+                  {% for line in result.lines %}<tr><td>{{ line.transition }}</td><td>{{ '%.2f'|format(line.wavelength_nm) }}</td><td>{{ '%.3f'|format(line.energy_eV) }}</td></tr>{% endfor %}
+                </tbody></table>
+              {% endif %}
+            {% else %}
+              <div class="empty-result">Results will appear here after valid inputs are submitted.</div>
+            {% endif %}
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

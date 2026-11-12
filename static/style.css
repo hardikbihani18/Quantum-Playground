@@ -1,0 +1,196 @@
+* { box-sizing: border-box; }
+:root { color-scheme: light; --ink: #1e1b4b; --muted: #5b21b6; --line: #c7d2fe; --paper: #fffdf9; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 50%, #e0f2fe 100%);
+  font-family: Georgia, "Times New Roman", serif;
+}
+a { color: inherit; text-decoration: none; }
+.paper {
+  width: min(1160px, calc(100% - 36px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 28px 58px 30px 76px;
+  background-color: var(--paper);
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(0,0,0,.045) 32px);
+  border-left: 1px solid #818cf8;
+  border-right: 1px solid #818cf8;
+  box-shadow: 0 0 24px rgba(0,0,0,.06);
+  position: relative;
+}
+.paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 43px;
+  border-left: 2px solid #fb7185;
+  opacity: .55;
+}
+.topbar { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--ink); padding: 0 0 14px; }
+.wordmark { font-family: Georgia, serif; font-size: 22px; font-weight: 700; letter-spacing: -.08em; }
+.wordmark span { font-size: 12px; letter-spacing: 0; }
+.top-note, .overline, .section-label, .sheet-heading, .chart-heading, .page-footer, .cover-rule, .module-number, .export-link {
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+.top-note { color: #555; }
+.cover { display: grid; grid-template-columns: 160px 1fr 90px; gap: 26px; align-items: center; padding: 44px 0 38px; border-bottom: 1px dashed #777; }
+.cover-mark { font-size: 140px; line-height: .8; font-weight: 700; font-style: italic; text-align: center; transform: rotate(-8deg); }
+.cover-copy { max-width: 620px; }
+.overline { margin: 0 0 10px; color: #555; }
+h1 { margin: 0; font-size: clamp(48px, 7vw, 80px); line-height: .88; letter-spacing: -.075em; }
+h1 span { font-style: italic; font-weight: 400; }
+.intro { max-width: 520px; margin: 20px 0 18px; font-size: 16px; line-height: 1.55; }
+.cover-rule { display: flex; flex-wrap: wrap; gap: 18px; color: #555; font-size: 9px; }
+.cover-stamp { width: 78px; height: 78px; border: 2px solid var(--ink); border-radius: 50%; display: grid; place-content: center; text-align: center; font: 700 10px/1.4 "Courier New", monospace; transform: rotate(9deg); box-shadow: 2px 2px 0 #111; }
+.notebook-nav { padding: 28px 0 30px; border-bottom: 1px dashed #777; }
+.section-label, .sheet-heading, .chart-heading { display: flex; justify-content: space-between; align-items: center; color: #555; }
+.module-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.module-link { display: grid;
+  grid-template-columns: 32px 1fr 16px;
+  align-items: center;
+  gap: 8px;
+  background: #f5f3ff;
+  border: 1.5px solid #a78bfa;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 2px 3px 0 #7c3aed;
+  transition: transform .15s ease, background .15s ease; }
+.module-link:hover {  transform: translate(-2px, -2px);
+  background: #ede9fe;
+  border-color: #ec4899;
+  box-shadow: 4px 5px 0 #ec4899; }
+.module-link.selected { background: #efefef; outline: 1px dashed #333; outline-offset: -6px; }
+.module-number { color: #555; }
+.module-name { font-size: 15px; font-weight: 700; }
+.module-arrow { text-align: right; font-size: 18px; }
+.experiment { padding: 34px 0 38px; }
+.experiment-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.experiment-heading h2 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.06em; }
+.check-mark { width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 4px 9px 3px 7px; font-size: 24px; transform: rotate(5deg); box-shadow: 2px 2px 0 #111; }
+.work-grid { display: grid; grid-template-columns: minmax(250px, .82fr) minmax(0, 1.18fr); gap: 22px; align-items: start; }
+.input-sheet, .result-sheet { background: rgba(255,255,255,.94); border: 1.8px solid var(--ink); border-radius: 4px 10px 6px 5px; box-shadow: 3px 4px 0 var(--ink); padding: 19px 20px 18px; min-width: 0; }
+.sheet-heading { padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid #888; }
+form label { display: block; margin: 0 0 14px; font-size: 14px; font-weight: 700; }
+form label small { display: block; margin: 3px 0 5px; color: #666; font: 10px "Courier New", monospace; }
+input, select { display: block; width: 100%; margin-top: 6px; padding: 9px 10px; border: 1.4px solid #222; border-radius: 3px; background: white; color: #111; font: 14px "Courier New", monospace; box-shadow: 1px 2px 0 #aaa; }
+input:focus, select:focus { outline: 2px solid #222; outline-offset: 2px; }
+.two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.formula-note { margin: 16px 0; padding: 12px; border: 1px dashed #555; background: #fafafa; }
+.formula-note span { display: block; margin-bottom: 8px; color: #666; font: 9px "Courier New", monospace; letter-spacing: .08em; }
+.formula-note strong { font-size: 17px; font-weight: 600; }
+.form-actions { background-color: #EFF6FF; /* Soft light blue tint (matches your top cards) */
+  border: 1.5px solid #2563EB; /* Clean blue border instead of black */
+  border-radius: 10px;         /* Slightly softer rounded corners */
+  padding: 12px 16px;          /* Comfortable spacing around the button */
+  display: inline-flex;        /* Wraps neatly around the button */
+  align-items: center; }
+button { padding: 10px 14px; border: 1.5px solid #111; border-radius: 3px 7px 4px 6px; background: #171717; color: white; font: 700 12px "Courier New", monospace; cursor: pointer; box-shadow: 2px 2px 0 #777; }
+button span { padding-left: 8px; font-size: 16px; }
+button.save-button { background: white; color: #111; }
+.pencil-note { margin: 15px 0 0; color: #555; font: italic 12px Georgia, serif; }
+.notice { margin: 0 0 16px; padding: 10px 12px; border: 1px dashed #222; background: #f4f4f4; font: 12px "Courier New", monospace; }
+.notice.error { border-style: solid; }
+.metric { padding: 10px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 1px dashed #aaa; }
+.metric span { color: #555; font-size: 13px; }
+.metric strong { text-align: right; font-size: 16px; }
+.metric strong.small-metric { font-size: 12px; font-family: "Courier New", monospace; }
+.chart-heading { margin: 22px 0 10px; padding-bottom: 8px; border-bottom: 1px solid #888; }
+.result-chart { display: block; width: 100%; height: auto; border: 1px solid #bbb; background: white; }
+.table-title { margin: 20px 0 8px; font-size: 17px; }
+table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; }
+th, td { padding: 8px 7px; border: 1px solid #aaa; text-align: left; }
+th { background: #eee; font: 700 10px "Courier New", monospace; }
+.export-link { display: inline-block; margin-top: 17px; padding-bottom: 3px; border-bottom: 1px solid #111; font-size: 10px; }
+.empty-result { min-height: 220px; display: grid; place-items: center; text-align: center; color: #777; font-style: italic; line-height: 1.5; }
+.page-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding-top: 16px; border-top: 2px solid #111; color: #555; font-size: 9px; }
+.saved-page main { padding-top: 42px; }
+.saved-title { margin: 0 0 24px; }
+pre { padding: 16px; overflow-x: auto; border: 1px dashed #555; background: #fafafa; font: 12px/1.5 "Courier New", monospace; white-space: pre-wrap; }
+.back-link { display: inline-block; margin-top: 20px; padding-bottom: 4px; border-bottom: 1px solid #111; font: 12px "Courier New", monospace; }
+@media (max-width: 850px) {
+  .paper { padding: 22px 30px 28px 48px; }
+  .paper::before { left: 28px; }
+  .cover { grid-template-columns: 90px 1fr; }
+  .cover-mark { font-size: 90px; }
+  .cover-stamp { display: none; }
+  .module-list { grid-template-columns: repeat(2, 1fr); }
+  .work-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .paper { width: 100%; padding: 18px 18px 24px 34px; }
+  .paper::before { left: 20px; }
+  .top-note { font-size: 8px; }
+  .cover { display: block; padding: 32px 0 28px; }
+  .cover-mark { display: none; }
+  h1 { font-size: 56px; }
+  .module-list { grid-template-columns: 1fr; }
+  .two-fields { grid-template-columns: 1fr 1fr; }
+  .input-sheet, .result-sheet { padding: 15px; }
+  .page-footer { flex-direction: column; }
+}
+
+
+/* === VISUAL PRESENTATION UPGRADES === */
+
+/* 1. Gradient Title for "Quantum Playground." */
+h1 {
+  background: linear-gradient(90deg, #1e1b4b 0%, #4f46e5 55%, #db2777 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.15;
+  padding-bottom: 0.15em;
+}
+
+/* 2. Give each of the 6 Experiment Cards its own pastel color */
+.module-list > *:nth-child(1) .module-link,
+.module-list > a:nth-child(1) {
+  background: #eff6ff; border-color: #60a5fa; box-shadow: 2px 3px 0 #3b82f6;
+}
+.module-list > *:nth-child(2) .module-link,
+.module-list > a:nth-child(2) {
+  background: #f0fdf4; border-color: #4ade80; box-shadow: 2px 3px 0 #16a34a;
+}
+.module-list > *:nth-child(3) .module-link,
+.module-list > a:nth-child(3) {
+  background: #fffbeb; border-color: #fbbf24; box-shadow: 2px 3px 0 #d97706;
+}
+.module-list > *:nth-child(4) .module-link,
+.module-list > a:nth-child(4) {
+  background: #f5f3ff; border-color: #a78bfa; box-shadow: 2px 3px 0 #7c3aed;
+}
+.module-list > *:nth-child(5) .module-link,
+.module-list > a:nth-child(5) {
+  background: #fdf2f8; border-color: #f472b6; box-shadow: 2px 3px 0 #db2777;
+}
+.module-list > *:nth-child(6) .module-link,
+.module-list > a:nth-child(6) {
+  background: #ecfeff; border-color: #22d3ee; box-shadow: 2px 3px 0 #0891b2;
+}
+
+/* 3. Color the "CHECKED" stamp badge in emerald green */
+.cover-stamp {
+  border-color: #059669 !important;
+  color: #059669 !important;
+  background: #ecfdf5;
+}
+
+/* 4. Style Inputs, Dropdowns, and Result Tables */
+select, input {
+  background: #f8fafc;
+  border: 1.5px solid #818cf8;
+  border-radius: 6px;
+  color: #1e1b4b;
+  font-weight: 600;
+}
+
+table, .results-panel, .card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #a5b4fc;
+}
+
